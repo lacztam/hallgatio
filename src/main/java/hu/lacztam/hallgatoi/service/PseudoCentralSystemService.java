@@ -5,20 +5,21 @@ import java.util.Random;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import hu.lacztam.hallgatoi.aspect.CheckThrow;
 import hu.lacztam.hallgatoi.aspect.SecureMethodCall;
 import lombok.AllArgsConstructor;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @AllArgsConstructor
-public class PseudoCentralSystem {
+public class PseudoCentralSystemService {
 
 	private final StudentService studentService;
 	
+	@SecureMethodCall
 	public int mock_usedFreeSemesterByStudent(int centralIdentifier) throws Exception {
 		studentService.findByCentralIdentifier(centralIdentifier);
 		Random random = new Random();
+		
 		// minden 2. kérésre hibát dobjon
 		int randomNum = ThreadLocalRandom.current().nextInt(0, 100 + 1);
 		if (randomNum < 50) {
@@ -28,7 +29,7 @@ public class PseudoCentralSystem {
 		return random.nextInt(0, 12);
 	}
 
-	//@Scheduled(cron = "*/10 * * * * *")
+	@Scheduled(cron = "*/10 * * * * *")
 	public void selectAllStudents() {
 		System.out.println("\nstart");
 		studentService.findAll().forEach(s -> {

@@ -1,29 +1,24 @@
 package hu.lacztam.hallgatoi.aspect;
 
-import org.aspectj.lang.JoinPoint;
+import javax.naming.CannotProceedException;
+
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-import org.aspectj.weaver.Advice;
 
 
 @Aspect
 @Component
 public class HandleExceptionAspect {
 
-	//@Pointcut("execution(* hu.lacztam.hallgatoi.service.PseudoCentralSystem.mock_usedFreeSemesterByStudent(..)) && args(int) ")
 	@Pointcut("@annotation(hu.lacztam.hallgatoi.aspect.SecureMethodCall) || @within(hu.lacztam.hallgatoi.aspect.SecureMethodCall)")
 	public void annotationSecureMethodCall() {
-
 	}
 
-	//@Around("hu.lacztam.hallgatoi.aspect.HandleExceptionAspect.annotationSecureMethodCall()")
-	@Around("execution(* hu.lacztam.hallgatoi.service.*.*(..))")
+	// nem tudtam rátanni a mock_usedFreeSemesterByStudent(int) metódusra, sem az @AfterThrowing annotációval sem, sem ezzel
+	@Around("execution(* hu.lacztam.hallgatoi.service.PseudoCentralSystemService.mock_usedFreeSemesterByStudent(..))")
 	public Object tryAgainMethodCall(ProceedingJoinPoint pjp) throws Throwable {
 		System.out.println("\ntryAgainMethodCall() called");
 		try {
@@ -31,24 +26,14 @@ public class HandleExceptionAspect {
 			pjp.proceed();
 			return pjp.proceed();
 		} catch (Exception e) {
-			System.out.println("exception: " + e.getMessage());
+			for(int i = 0; i < 5; i++) {
+				try {
+					pjp.proceed();
+				} catch (Exception ex) { }
+			}
 		}
-		return null;
-	}
-	
-	@Pointcut("@annotation(hu.lacztam.hallgatoi.aspect.CheckThrow) || @within(hu.lacztam.hallgatoi.aspect.CheckThrow)")
-	public void annotationExCheckCall() { }
-	
-	@Before("hu.lacztam.hallgatoi.aspect.HandleExceptionAspect.annotationExCheckCall()")
-	public void checkEx(JoinPoint joinPoint) {
-		Class<? extends Object> clazz = joinPoint.getTarget().getClass();
-		Class<?>[] interfaces = clazz.getInterfaces();
-		String targetType = interfaces.length == 0 ? clazz.getName() : interfaces[0].toString();
-		if(interfaces.length > 1)
 		
-		System.out.println( interfaces[1].toString() + "");
-		
-		System.out.format("Method %s called in class %s%n", joinPoint.getSignature(), targetType);
+		throw new CannotProceedException();
 	}
 	
 }

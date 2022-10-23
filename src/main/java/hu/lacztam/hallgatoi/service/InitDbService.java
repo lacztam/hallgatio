@@ -2,6 +2,7 @@ package hu.lacztam.hallgatoi.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +34,10 @@ public class InitDbService {
 	//duplikaltan hozza letre az mind a harom entitast (tanlulok, tanarok, kurzusok)
 	@Transactional
 	public void createStudents(){
-		
-		Student student1 = new Student(0, "Klári", LocalDate.now().minusYears(20), 2, 111222, 0);
-		Student student2 = new Student(0, "Panka", LocalDate.now().minusYears(21), 3, 222333, 1);
-		Student student3 = new Student(0, "Ilona", LocalDate.now().minusYears(18), 4, 333444, 2);
-		Student student4 = new Student(0, "Anna", LocalDate.now().minusYears(19), 1, 444555, 3);
+		Student student1 = new Student(0, "Klári", LocalDate.now().minusYears(20), 2, ThreadLocalRandom.current().nextInt(100, 999 + 1), 0);
+		Student student2 = new Student(0, "Panka", LocalDate.now().minusYears(21), 3, ThreadLocalRandom.current().nextInt(100, 999 + 1), 1);
+		Student student3 = new Student(0, "Ilona", LocalDate.now().minusYears(18), 4, ThreadLocalRandom.current().nextInt(100, 999 + 1), 2);
+		Student student4 = new Student(0, "Anna", LocalDate.now().minusYears(19), 1, ThreadLocalRandom.current().nextInt(100, 999 + 1), 3);
 		
 		studentService.save(student1);
 		studentService.save(student2);
