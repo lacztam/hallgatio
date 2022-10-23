@@ -1,0 +1,32 @@
+server.error.include-message=always
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/lacztam-hf
+
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.open-in-view=false
+
+spring.mvc.format.date-time=yyyy-MM-dd'T'HH:mm:ss
+
+#spring.jpa.properties.javax.persistence.schema-generation.create-source=metadata
+#spring.jpa.properties.javax.persistence.schema-generation.scripts.action=create
+#spring.jpa.properties.javax.persistence.schema-generation.scripts.create-target=create.sql 
+
+#Az adatb�zisban a baseline sor nem j�tt l�tre
+spring.flyway.baseline-on-migrate=true
+
+select 
+	course0_.id as id1_0_0_, 
+	student2_.id as id1_3_1_, 
+	course0_.name as name2_0_0_, 
+	student2_.birthdate as birthdat2_3_1_, 
+	student2_.name as name3_3_1_, 
+	student2_.semester as semester4_3_1_, 
+	students1_.course_id as course_i1_1_0__, 
+	students1_.students_id as students2_1_0__ 
+from course course0_ 
+left outer join course_students students1_ on course0_.id=students1_.course_id 
+left outer join student student2_ on students1_.students_id=student2_.id
