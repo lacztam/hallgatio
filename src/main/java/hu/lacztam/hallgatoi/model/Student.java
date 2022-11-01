@@ -44,5 +44,7 @@ public class Student {
 	private int centralIdentifier;
 	@Column(name = "used_free_semester")
 	private int usedFreeSemester;
+	
+	 
 
 }

@@ -1,7 +1,11 @@
 package hu.lacztam.hallgatoi.web;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,7 +54,7 @@ public class HistoryControllerOld {
 	
 	@GetMapping("/{id}/student/{timeInMilli}")
 	public HistoryData<StudentDto> getStudentHistoryById(@PathVariable int id, @PathVariable long timeInMilli) {
-		HistoryData<Student> studentHistory = historyService.getStudentHistory(id, timeInMilli);
+		HistoryData<Student> studentHistory = historyService.getStudentHistoryLT(id, timeInMilli);
 		
 		StudentDto studentDto = studentMapper.studentToDto(studentHistory.getData());
 		
@@ -63,5 +67,22 @@ public class HistoryControllerOld {
 		
 		return studentDtoHistory;
 	}
+	
+	@GetMapping("/{id}/student2/{timeInMilli}")
+	public StudentDto getStudentHistoryById2(@PathVariable int id, @NotNull @Valid OffsetDateTime at) {
+		Student studentAt = historyService.getStudentHistoryWebuni(id, at);
+		
+		StudentDto studentDto = studentMapper.studentToDto(studentAt);
+		
+//		HistoryData<StudentDto> studentDtoHistory 
+//			= new HistoryData<StudentDto>(
+//				studentDto, 
+//				studentHistory.getRevisionType(), 
+//				studentHistory.getRevision(), 
+//				studentHistory.getDate());
+		
+		return studentDto;
+	}
+	
 	
 }

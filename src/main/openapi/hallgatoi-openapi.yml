@@ -183,6 +183,18 @@ paths:
       responses:
         '200':
           description: OK
+  '/api/images/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: downloadImage
 components:
   schemas:
     StudentDto:

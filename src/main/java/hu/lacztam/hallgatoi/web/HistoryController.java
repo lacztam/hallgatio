@@ -1,10 +1,16 @@
 package hu.lacztam.hallgatoi.web;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -54,11 +60,27 @@ public class HistoryController implements HistoryControllerApi {
 
 	@Override
 	public ResponseEntity<HistoryDataStudentDto> getStudentHistoryById(Integer id, Long timeInMilli) {
-		HistoryData<Student> studentHistory = historyService.getStudentHistory(id, timeInMilli);
+		HistoryData<Student> studentHistory = historyService.getStudentHistoryLT(id, timeInMilli);
 		
 		HistoryDataStudentDto historyDataStudentDto = studentMapper.studentHistoryDataToDto(studentHistory.getData());
 		
 		return ResponseEntity.ok(historyDataStudentDto);
+	}
+	
+	@GetMapping("/{id}/student2/{at}")
+	public StudentDto getStudentHistoryById2(@PathVariable int id, @NotNull @Valid OffsetDateTime at) {
+		Student studentAt = historyService.getStudentHistoryWebuni(id, at);
+		
+		StudentDto studentDto = studentMapper.studentToDto(studentAt);
+		
+//		HistoryData<StudentDto> studentDtoHistory 
+//			= new HistoryData<StudentDto>(
+//				studentDto, 
+//				studentHistory.getRevisionType(), 
+//				studentHistory.getRevision(), 
+//				studentHistory.getDate());
+		
+		return studentDto;
 	}
 
 }

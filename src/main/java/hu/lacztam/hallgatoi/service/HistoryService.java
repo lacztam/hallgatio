@@ -3,7 +3,9 @@ package hu.lacztam.hallgatoi.service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -27,10 +29,32 @@ public class HistoryService {
 	@PersistenceContext
 	private final EntityManager em;
 	
+	@Transactional
+	@SuppressWarnings("rawtypes")
+	public Student getStudentHistoryWebuni(int id, OffsetDateTime when) {
+
+        long epochMillis = when.toInstant().toEpochMilli();
+        
+        List resultList = AuditReaderFactory.get(em)
+            .createQuery()            
+            .forRevisionsOfEntity(Student.class, true, false)
+            .add(AuditEntity.property("id").eq(id))
+            .add(AuditEntity.revisionProperty("timestamp").le(epochMillis))
+            .addOrder(AuditEntity.revisionProperty("timestamp").desc())
+                .setMaxResults(1)
+                .getResultList();
+        
+        if(!resultList.isEmpty()) {
+        	Student student = (Student) resultList.get(0);
+            return student;
+        }
+                    
+        return null;
+	}
 	
 	@Transactional
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	public HistoryData<Student> getStudentHistory(int id, long timeInMilli){
+	public HistoryData<Student> getStudentHistoryLT(int id, long timeInMilli){
 		LocalDateTime studentRevisionDate = Instant.ofEpochMilli(timeInMilli).atZone(ZoneId.systemDefault()).toLocalDateTime();
 		
 		Optional<HistoryData<Student>> optionalHistoryDateofStudent = AuditReaderFactory.get(em)
