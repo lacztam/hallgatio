@@ -1,0 +1,270 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: 'http://localhost:8080'
+    description: Generated server url
+paths:
+  '/api/student/{id}':
+    put:
+      tags:
+        - student-controller
+      operationId: modifyStudent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentDto'
+  '/api/course/{courseId}':
+    put:
+      tags:
+        - course-controller
+      operationId: modifyCourse
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDto'
+  /api/student/insert_students:
+    post:
+      tags:
+        - student-controller
+      operationId: insertStudents
+      responses:
+        '200':
+          description: OK
+  '/api/teachers/{id}':
+    get:
+      tags:
+        - teacher-controller
+      operationId: findById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherDto'
+  /api/student:
+    get:
+      tags:
+        - student-controller
+      operationId: getEveryStudent
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDto'
+  '/api/history/{id}/student/{timeInMilli}':
+    get:
+      tags:
+        - history-controller
+      operationId: getStudentHistoryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: timeInMilli
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoryDataStudentDto'
+  '/api/history/{id}/course':
+    get:
+      tags:
+        - history-controller
+      operationId: getCourseHistoryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HistoryDataCourseDto'
+  /api/course/search:
+    get:
+      tags:
+        - course-controller
+      operationId: searchCourse
+      parameters:
+        - name: full
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - schema:
+            type: integer
+          in: query
+          name: page
+        - schema:
+            type: integer
+          in: query
+          name: size
+        - schema:
+            type: string
+          in: query
+          name: sort
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseDto'
+  /api/student/delete_all:
+    delete:
+      tags:
+        - student-controller
+      operationId: deleteAllStudent
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    StudentDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        semester:
+          type: integer
+          format: int32
+        centralIdentifier:
+          type: integer
+          format: int32
+        usedFreeSemester:
+          type: integer
+          format: int32
+    CourseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentDto'
+        teachers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeacherDto'
+    TeacherDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        birthdate:
+          type: string
+          format: date
+    HistoryDataStudentDto:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/StudentDto'
+        revisionType:
+          type: string
+          enum:
+            - ADD
+            - MOD
+            - DEL
+        revision:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date-time
+    HistoryDataCourseDto:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/CourseDto'
+        revisionType:
+          type: string
+          enum:
+            - ADD
+            - MOD
+            - DEL
+        revision:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date-time
+    Predicate:
+      type: object

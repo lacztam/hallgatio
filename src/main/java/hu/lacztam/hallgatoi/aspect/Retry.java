@@ -9,6 +9,9 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
-public @interface SecureMethodCall {
+public @interface Retry {
 
+	int times() default 3;
+	long waitTime() default 1000;
+	
 }

@@ -107,6 +107,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.5.6</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -131,6 +137,19 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>1.6.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -184,6 +203,31 @@
 					</execution>
 				</executions>
 			</plugin>
+<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>5.3.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/openapi/hallgatoi-openapi.yml</inputSpec>
+							<generatorName>spring</generatorName>
+							<configOptions>
+								<useTags>true</useTags>
+								<dateLibrary>java8-localdatetime</dateLibrary>
+								<configPackage>hu.lacztam.hallgatoi.api.config</configPackage>
+								<interfaceOnly>true</interfaceOnly>
+							</configOptions>
+							<apiPackage>hu.lacztam.hallgatoi.api</apiPackage>
+							<modelPackage>hu.lacztam.hallgatoi.api.model</modelPackage>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 

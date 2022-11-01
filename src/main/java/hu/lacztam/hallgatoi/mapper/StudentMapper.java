@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 
-import hu.lacztam.hallgatoi.dto.StudentDto;
+import hu.lacztam.hallgatoi.api.model.HistoryDataStudentDto;
+import hu.lacztam.hallgatoi.api.model.StudentDto;
 import hu.lacztam.hallgatoi.model.Student;
 
 
@@ -16,5 +17,7 @@ public interface StudentMapper {
 	Student dtoToStudent(StudentDto studentDto);
 	
 	List<StudentDto> studentsToDtos(List<Student> students);
+
+	HistoryDataStudentDto studentHistoryDataToDto(Student data);
 	
 }

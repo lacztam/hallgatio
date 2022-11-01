@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import hu.lacztam.hallgatoi.dto.CourseDto;
+import hu.lacztam.hallgatoi.api.model.CourseDto;
 import hu.lacztam.hallgatoi.model.Course;
 
 @Mapper(componentModel = "spring")

@@ -36,6 +36,13 @@ public class CourseService {
 	@PersistenceContext
 	private EntityManager em;
 	
+	public Course saveCourse(Course course) {
+		if(course == null)
+			throw new NullPointerException();
+		
+		return courseRepository.save(course);
+	}
+	
 	@Transactional
 	@Cacheable("pagedCoursessWithRelationships")
 	public List<Course> searchCourses(Predicate predicate, Pageable pageable){

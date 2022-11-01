@@ -1,18 +1,20 @@
 package hu.lacztam.hallgatoi.web;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.NativeWebRequest;
 
-import hu.lacztam.hallgatoi.dto.CourseDto;
-import hu.lacztam.hallgatoi.dto.StudentDto;
+import hu.lacztam.hallgatoi.api.HistoryControllerApi;
+import hu.lacztam.hallgatoi.api.model.CourseDto;
+import hu.lacztam.hallgatoi.api.model.HistoryDataCourseDto;
+import hu.lacztam.hallgatoi.api.model.HistoryDataStudentDto;
+import hu.lacztam.hallgatoi.api.model.StudentDto;
 import hu.lacztam.hallgatoi.mapper.CourseMapper;
+import hu.lacztam.hallgatoi.mapper.HistoryDataMapper;
 import hu.lacztam.hallgatoi.mapper.StudentMapper;
 import hu.lacztam.hallgatoi.model.Course;
 import hu.lacztam.hallgatoi.model.HistoryData;
@@ -21,49 +23,42 @@ import hu.lacztam.hallgatoi.service.CourseService;
 import hu.lacztam.hallgatoi.service.HistoryService;
 import lombok.RequiredArgsConstructor;
 
-
 @RestController
-@RequestMapping("/api/history")
 @RequiredArgsConstructor
-public class HistoryController {
-	
+public class HistoryController implements HistoryControllerApi {
+
 	private final CourseMapper courseMapper;
 	private final CourseService courseService;
 	private final HistoryService historyService;
 	private final StudentMapper studentMapper;
-	
-	@GetMapping("/{id}/course")
-	public List<HistoryData<CourseDto>> getCourseHistoryById(@PathVariable int id) {
-		List<HistoryData<Course>> courses = courseService.getCourseHistory(id); 
-	
-		List<HistoryData<CourseDto>> courseDtosWithHistory = new ArrayList<>();
-		
-		courses.forEach(hd -> {
-			courseDtosWithHistory.add(new HistoryData<>(
-				courseMapper.courseToDto(hd.getData()),
-				hd.getRevisionType(),
-				hd.getRevision(),
-				hd.getDate()
-				));
-		});
-		
-		return courseDtosWithHistory;
+	private final HistoryDataMapper historyDataMapper;
+
+	@Override
+	public Optional<NativeWebRequest> getRequest() {
+		// TODO Auto-generated method stub
+		return HistoryControllerApi.super.getRequest();
 	}
-	
-	@GetMapping("/{id}/student/{timeInMilli}")
-	public HistoryData<StudentDto> getStudentHistoryById(@PathVariable int id, @PathVariable long timeInMilli) {
+
+	@Override
+	public ResponseEntity<List<HistoryDataCourseDto>> getCourseHistoryById(Integer id) {
+		List<HistoryData<Course>> courses = courseService.getCourseHistory(id);
+
+		List<HistoryDataCourseDto> courseDtosWithHistory = new ArrayList<>();
+
+		courses.forEach(hd -> {
+			courseDtosWithHistory.add(historyDataMapper.courseHistoryDataToDto(hd));
+		});
+
+		return ResponseEntity.ok(courseDtosWithHistory);
+	}
+
+	@Override
+	public ResponseEntity<HistoryDataStudentDto> getStudentHistoryById(Integer id, Long timeInMilli) {
 		HistoryData<Student> studentHistory = historyService.getStudentHistory(id, timeInMilli);
 		
-		StudentDto studentDto = studentMapper.studentToDto(studentHistory.getData());
+		HistoryDataStudentDto historyDataStudentDto = studentMapper.studentHistoryDataToDto(studentHistory.getData());
 		
-		HistoryData<StudentDto> studentDtoHistory 
-			= new HistoryData<StudentDto>(
-				studentDto, 
-				studentHistory.getRevisionType(), 
-				studentHistory.getRevision(), 
-				studentHistory.getDate());
-		
-		return studentDtoHistory;
+		return ResponseEntity.ok(historyDataStudentDto);
 	}
-	
+
 }

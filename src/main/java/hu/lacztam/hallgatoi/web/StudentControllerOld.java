@@ -2,73 +2,66 @@ package hu.lacztam.hallgatoi.web;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
-import hu.lacztam.hallgatoi.api.StudentControllerApi;
 import hu.lacztam.hallgatoi.api.model.StudentDto;
 import hu.lacztam.hallgatoi.mapper.StudentMapper;
 import hu.lacztam.hallgatoi.model.Student;
 import hu.lacztam.hallgatoi.repository.StudentRepository;
 import hu.lacztam.hallgatoi.service.InitDbService;
 import hu.lacztam.hallgatoi.service.StudentService;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@RestController
-@RequiredArgsConstructor
-public class StudentController implements StudentControllerApi {
+//@RestController
+@RequestMapping("/api/student")
+@AllArgsConstructor
+public class StudentControllerOld {
 	
 	private final StudentRepository studentRepository;
 	private final StudentMapper studentMapper;
 	private final StudentService studentService;
 	private final InitDbService initDbService;
-	private final NativeWebRequest nativeWebRequest;
-	
-	@Override
-	public Optional<NativeWebRequest> getRequest() {
-		return Optional.of(nativeWebRequest);
+
+	@GetMapping
+	public List<StudentDto> getEveryStudent(){
+		return studentMapper.studentsToDtos(studentRepository.findAll());
 	}
 	
-	@Override
-	public ResponseEntity<StudentDto> modifyStudent(Integer id, @Valid StudentDto studentDto) {
+	@PutMapping("/{id}")
+	public StudentDto modifyStudent(@PathVariable int id, @RequestBody StudentDto studentDto) {
+
 		Student student = studentMapper.dtoToStudent(studentDto);
 		
 		student.setId(id);
 		try {
 			StudentDto savedStudentDto = studentMapper.studentToDto(studentService.update(student));
 			
-			return ResponseEntity.ok(savedStudentDto);
+			return savedStudentDto;
 		} catch (NoSuchElementException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}
 	}
-
-	@Override
-	public ResponseEntity<Void> deleteAllStudent() {
+	
+	@DeleteMapping("/delete_all")
+	public void deleteAllStudent() {
 		initDbService.deleteDb();
-		
-		return ResponseEntity.ok().build();
 	}
-
-	@Override
-	public ResponseEntity<List<StudentDto>> getEveryStudent() {
-		return ResponseEntity.ok(studentMapper.studentsToDtos(studentRepository.findAll()));
-	}
-
-	@Override
-	public ResponseEntity<Void> insertStudents() {
+	
+	@PostMapping("/insert_students")
+	public void insertStudents() {
 		initDbService.createStudents();
-		initDbService.createTeachers();
-		initDbService.createCourses();
-		
-		return ResponseEntity.ok().build();
+//		initDbService.createTeachers();
+//		initDbService.createCourses();
 	}
-
+	
 }
