@@ -70,9 +70,9 @@ public class HistoryControllerOld {
 	
 	@GetMapping("/{id}/student2/{timeInMilli}")
 	public StudentDto getStudentHistoryById2(@PathVariable int id, @NotNull @Valid OffsetDateTime at) {
-		Student studentAt = historyService.getStudentHistoryWebuni(id, at);
-		
-		StudentDto studentDto = studentMapper.studentToDto(studentAt);
+//		Student studentAt = historyService.getStudentHistoryWebuni(id, at);
+//		
+//		StudentDto studentDto = studentMapper.studentToDto(studentAt);
 		
 //		HistoryData<StudentDto> studentDtoHistory 
 //			= new HistoryData<StudentDto>(
@@ -81,7 +81,8 @@ public class HistoryControllerOld {
 //				studentHistory.getRevision(), 
 //				studentHistory.getDate());
 		
-		return studentDto;
+//		return studentDto;
+		return null;
 	}
 	
 	

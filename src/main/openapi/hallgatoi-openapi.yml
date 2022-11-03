@@ -3,21 +3,21 @@ info:
   title: OpenAPI definition
   version: v0
 servers:
-  - url: 'http://localhost:8080'
-    description: Generated server url
+- url: http://localhost:8080
+  description: Generated server url
 paths:
-  '/api/student/{id}':
+  /api/student/{id}:
     put:
       tags:
-        - student-controller
+      - student-controller
       operationId: modifyStudent
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
       requestBody:
         content:
           application/json:
@@ -31,18 +31,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StudentDto'
-  '/api/course/{courseId}':
+  /api/course/{courseId}:
     put:
       tags:
-        - course-controller
+      - course-controller
       operationId: modifyCourse
       parameters:
-        - name: courseId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
       requestBody:
         content:
           application/json:
@@ -59,23 +59,23 @@ paths:
   /api/student/insert_students:
     post:
       tags:
-        - student-controller
+      - student-controller
       operationId: insertStudents
       responses:
         '200':
           description: OK
-  '/api/teachers/{id}':
+  /api/teachers/{id}:
     get:
       tags:
-        - teacher-controller
+      - teacher-controller
       operationId: findById
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
       responses:
         '200':
           description: OK
@@ -86,7 +86,7 @@ paths:
   /api/student:
     get:
       tags:
-        - student-controller
+      - student-controller
       operationId: getEveryStudent
       responses:
         '200':
@@ -97,24 +97,24 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/StudentDto'
-  '/api/history/{id}/student/{timeInMilli}':
+  /api/history/{id}/student/{timeInMilli}:
     get:
       tags:
-        - history-controller
+      - history-controller
       operationId: getStudentHistoryById
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: timeInMilli
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: timeInMilli
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
       responses:
         '200':
           description: OK
@@ -122,18 +122,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HistoryDataStudentDto'
-  '/api/history/{id}/course':
+  /api/history/{id}/course:
     get:
       tags:
-        - history-controller
+      - history-controller
       operationId: getCourseHistoryById
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
       responses:
         '200':
           description: OK
@@ -146,26 +146,26 @@ paths:
   /api/course/search:
     get:
       tags:
-        - course-controller
+      - course-controller
       operationId: searchCourse
       parameters:
-        - name: full
-          in: query
-          required: false
-          schema:
-            type: boolean
-        - schema:
-            type: integer
-          in: query
-          name: page
-        - schema:
-            type: integer
-          in: query
-          name: size
-        - schema:
-            type: string
-          in: query
-          name: sort
+      - name: full
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - schema:
+          type: integer
+        in: query
+        name: page
+      - schema:
+          type: integer
+        in: query
+        name: size
+      - schema:
+          type: string
+        in: query
+        name: sort
       responses:
         '200':
           description: OK
@@ -178,45 +178,79 @@ paths:
   /api/student/delete_all:
     delete:
       tags:
-        - student-controller
+      - student-controller
       operationId: deleteAllStudent
       responses:
         '200':
           description: OK
-  '/api/images/{id}':
+  /api/students/{id}/profile:
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
+    - schema:
+        type: string
+      name: id
+      in: path
+      required: true
     get:
       summary: Your GET endpoint
-      tags: []
-      responses: {}
-      operationId: downloadImage
+      tags:
+      - student-controller
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      operationId: getProfilePicture
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+    post:
+      summary: ''
+      operationId: uploadProfilePicture
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  format: binary
+      tags:
+      - student-controller
+    delete:
+      operationId: deleteProfilePicture
+      summary: ''
+      tags:
+      - student-controller
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
 components:
   schemas:
-    StudentDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        name:
-          type: string
-        birthdate:
-          type: string
-          format: date
-        semester:
-          type: integer
-          format: int32
-        centralIdentifier:
-          type: integer
-          format: int32
-        usedFreeSemester:
-          type: integer
-          format: int32
     CourseDto:
       type: object
       properties:
@@ -225,14 +259,25 @@ components:
           format: int32
         name:
           type: string
-        students:
-          type: array
-          items:
-            $ref: '#/components/schemas/StudentDto'
         teachers:
           type: array
           items:
             $ref: '#/components/schemas/TeacherDto'
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentDto'
+    StudentDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        semester:
+          type: integer
+          format: int32
     TeacherDto:
       type: object
       properties:
@@ -241,42 +286,66 @@ components:
           format: int32
         name:
           type: string
-        birthdate:
-          type: string
-          format: date
-    HistoryDataStudentDto:
+    Predicate:
+      type: object
+    Pageable:
       type: object
       properties:
-        data:
-          $ref: '#/components/schemas/StudentDto'
-        revisionType:
-          type: string
-          enum:
-            - ADD
-            - MOD
-            - DEL
-        revision:
+        sort:
+          $ref: '#/components/schemas/Sort'
+        pageNumber:
           type: integer
           format: int32
-        date:
-          type: string
-          format: date-time
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+        paged:
+          type: boolean
+        offset:
+          type: integer
+          format: int64
+    Sort:
+      type: object
+      properties:
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+        empty:
+          type: boolean
     HistoryDataCourseDto:
       type: object
       properties:
         data:
           $ref: '#/components/schemas/CourseDto'
-        revisionType:
+        revType:
           type: string
           enum:
-            - ADD
-            - MOD
-            - DEL
+          - ADD
+          - MOD
+          - DEL
         revision:
           type: integer
           format: int32
         date:
           type: string
           format: date-time
-    Predicate:
+    HistoryDataStudentDto:
       type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/StudentDto'
+        revType:
+          type: string
+          enum:
+          - ADD
+          - MOD
+          - DEL
+        revision:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date-time

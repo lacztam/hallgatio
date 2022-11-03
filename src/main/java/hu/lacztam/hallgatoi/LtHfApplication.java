@@ -25,6 +25,7 @@ public class LtHfApplication implements CommandLineRunner{
 		initDbService.createStudents();
 		initDbService.createTeachers();
 		initDbService.createCourses();
+		initDbService.modifyStudent();
 	}
 
 }

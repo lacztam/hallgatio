@@ -1,15 +1,20 @@
 package hu.lacztam.hallgatoi.web;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import hu.lacztam.hallgatoi.api.StudentControllerApi;
@@ -64,11 +69,37 @@ public class StudentController implements StudentControllerApi {
 
 	@Override
 	public ResponseEntity<Void> insertStudents() {
+		initDbService.deleteDb();
 		initDbService.createStudents();
 		initDbService.createTeachers();
 		initDbService.createCourses();
 		
 		return ResponseEntity.ok().build();
 	}
+
+	@Override
+	public ResponseEntity<Resource> getProfilePicture(Integer id) {
+		return ResponseEntity.ok(studentService.getProfilePicture(id));
+	}
+
+	@Override
+	public ResponseEntity<Void> uploadProfilePicture(Integer id, @Valid MultipartFile content) {
+		try {
+			studentService.saveProfilePicture(id, content.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().build();
+		}
+		
+		return ResponseEntity.ok().build();
+	}
+
+	@Override
+	public ResponseEntity<Void> deleteProfilePicture(Integer id) {
+		studentService.deleteProfilePicture(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	
 
 }

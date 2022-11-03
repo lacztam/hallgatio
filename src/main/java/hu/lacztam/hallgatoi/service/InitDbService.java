@@ -85,4 +85,12 @@ public class InitDbService {
 		
 	}
 	
+	@Transactional
+	public void modifyStudent() {
+		List<Student> students = studentRepository.findAll();
+		Student student = students.get(0);
+		student.setName("AbrakManó");
+		studentRepository.save(student);
+	}
+	
 }

@@ -1,5 +1,6 @@
 package hu.lacztam.hallgatoi.web;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,11 +68,13 @@ public class HistoryController implements HistoryControllerApi {
 		return ResponseEntity.ok(historyDataStudentDto);
 	}
 	
-	@GetMapping("/{id}/student2/{at}")
-	public StudentDto getStudentHistoryById2(@PathVariable int id, @NotNull @Valid OffsetDateTime at) {
+	@GetMapping("/api/history/{id}/student2/{at}")
+	public StudentDto getStudentHistoryById2(@PathVariable int id, @PathVariable LocalDateTime at) {
 		Student studentAt = historyService.getStudentHistoryWebuni(id, at);
+		System.out.println(studentAt);
 		
 		StudentDto studentDto = studentMapper.studentToDto(studentAt);
+		System.out.println(studentDto);
 		
 //		HistoryData<StudentDto> studentDtoHistory 
 //			= new HistoryData<StudentDto>(
